@@ -89,11 +89,14 @@ def parse_as_html(menu):
     string = ""
 
     for station in sorted(stations.keys()):
-        string += f"\n<h2>{station}:</h2>"
+        string += f"\n    <h2>{station}:</h2>"
 
         items = sorted(stations[station])
-        nline = '\n'
-        string += f"\n<ul>\n{nline.join(f'<li>{item}</li>' for item in items)}\n</ul>"
+        nline = '\n      '
+        string += f'''
+    <ul>
+      {nline.join(f'<li>{item}</li>' for item in items)}
+    </ul>'''
 
     return template.replace("[MENU_PLACEHOLDER]", string)
 
