@@ -74,6 +74,9 @@ def parse_as_html(menu):
     '''
         parses elements as an html webpage
     '''
+    if not menu:
+        raise ValueError("Menu is empty.")
+
     template = open("template.html", "r").read()
     stations = dict()
 
