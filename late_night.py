@@ -15,6 +15,8 @@ MENU_ITEMS_REGEX = r"Bamco\.menu_items = ({(?:.+:.+,?)+})"
 LATE_NIGHT_REGEX = r"Bamco\.dayparts\[\'7\'\] = ({(?:.+:.+,?)+})"
 STATION_REGEX = r"<strong>@?(.+)<\/strong>"
 
+FLASK_APP = Flask('Late Night')
+
 def fetch_menu():
     '''
         makes a GET request to CBA's website and parses HTML
@@ -89,6 +91,7 @@ def parse_as_html(menu):
 
     return string
 
+@FLASK_APP.route('/')
 def main_html():
     file_name = f"{datetime.now().strftime('%d%m%y')}.html"
 
@@ -96,19 +99,9 @@ def main_html():
         return open(file_name, 'r').read()
 
     menu = fetch_menu()
+    html = parse_as_html(menu)
 
     with open(file_name, 'w') as file:
-        file.write(menu)
+        file.write(html)
 
-    return parse_as_html(menu)
-
-def main():
-    '''
-        runs the script
-    '''
-    app = Flask('Late Night')
-    app.add_url_rule('/', 'index', main_html)
-    app.run()
-
-if __name__ == '__main__':
-    main()
+    return html
