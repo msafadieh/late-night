@@ -1,4 +1,4 @@
-# pylint: disable=pointless-string-statement
+# pylint: disable = pointless-string-statement, broad-except
 '''
     Fetches a list of food items being served
     at late night.
@@ -63,14 +63,17 @@ def parse_results(menu):
         Menu Item 3 (Label 1)
         ...
     '''
-    get_string = lambda station: f"{station}:\n{chr(10).join(sorted(stations[station]))}"
+    get_str = lambda station: f"{station}:\n{chr(10).join(sorted(stations[station]))}"
 
-    output = [get_string(station) for station in sorted(stations.keys())]
+    output = [get_str(station) for station in sorted(stations.keys())]
 
     return '\n\n'.join(output)
-    
+
 
 def parse_as_html(menu):
+    '''
+        parses elements as an html webpage
+    '''
     stations = dict()
 
     for item in menu:
@@ -86,22 +89,31 @@ def parse_as_html(menu):
     for station in sorted(stations.keys()):
         string += f"<h2>{station}:</h2>"
 
-        sorted_items = sorted(stations[station])
-        string += f"<ul>{''.join(f'<li><strong>{item}</strong></li>' for item in sorted_items)}</ul>"
+        items = sorted(stations[station])
+        string += f"<ul>{''.join(f'<li><strong>{item}</strong></li>' for item in items)}</ul>"
 
     return string
 
 @FLASK_APP.route('/')
 def main_html():
-    file_name = f"{datetime.now().strftime('%d%m%y')}.html"
+    '''
+        creates an HTML file called "DDMMYY.html" with the list of late night
+        items if no file was found.
+    '''
+    try:
+        file_name = f"{datetime.now().strftime('%d%m%y')}.html"
 
-    if isfile(file_name):
-        return open(file_name, 'r').read()
+        if isfile(file_name):
+            return open(file_name, 'r').read()
 
-    menu = fetch_menu()
-    html = parse_as_html(menu)
+        menu = fetch_menu()
+        html = parse_as_html(menu)
 
-    with open(file_name, 'w') as file:
-        file.write(html)
+        with open(file_name, 'w') as file:
+            file.write(html)
 
-    return html
+        return html
+
+    except Exception as exception:
+        print(exception)
+        return "<h1>Internal Error.</h1>"
