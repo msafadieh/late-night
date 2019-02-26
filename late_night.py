@@ -74,6 +74,7 @@ def parse_as_html(menu):
     '''
         parses elements as an html webpage
     '''
+    template = open("template.html", "r").read()
     stations = dict()
 
     for item in menu:
@@ -85,14 +86,16 @@ def parse_as_html(menu):
         stations.setdefault(station, [])
         stations[station].append(item_string)
 
-    string = "<title>Late Night Menu</title><h1>Late Night Menu:</h1>"
+    string = ""
+
     for station in sorted(stations.keys()):
-        string += f"<h2>{station}:</h2>"
+        string += f"\n<h2>{station}:</h2>"
 
         items = sorted(stations[station])
-        string += f"<ul>{''.join(f'<li><strong>{item}</strong></li>' for item in items)}</ul>"
+        nline = '\n'
+        string += f"\n<ul>\n{nline.join(f'<li>{item}</li>' for item in items)}\n</ul>"
 
-    return string
+    return template.replace("[MENU_PLACEHOLDER]", string)
 
 @FLASK_APP.route('/')
 def main_html():
