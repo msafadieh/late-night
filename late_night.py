@@ -85,7 +85,7 @@ def parse_as_html(menu):
         stations.setdefault(station, [])
         stations[station].append(item_string)
 
-    string = "<h1>Late Night Menu:</h1>"
+    string = "<title>Late Night Menu:</title><h1>Late Night Menu:</h1>"
     for station in sorted(stations.keys()):
         string += f"<h2>{station}:</h2>"
 
