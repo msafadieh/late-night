@@ -47,7 +47,7 @@ def parse_results(menu):
 
     for item in menu:
         item_name = item.get('label').capitalize()
-        labels = ', '.join(sorted(item.get('cor_icon').values()))
+        labels = ', '.join(sorted(item.get('cor_icon', {}).values()))
 
         item_string = f"{item_name} ({labels})"
         station = findall(STATION_REGEX, item.get('station'))[0].title()
@@ -75,31 +75,32 @@ def parse_as_html(menu):
         parses elements as an html webpage
     '''
     if not menu:
-        raise ValueError("Menu is empty.")
+        string = "<h1>No food on the menu tonight.</h1>"
 
-    template = open("template.html", "r").read()
-    stations = dict()
+    else:
+        template = open("template.html", "r").read()
+        stations = dict()
 
-    for item in menu:
-        item_name = item.get('label').capitalize()
-        labels = ', '.join(sorted(item.get('cor_icon').values()))
+        for item in menu:
+            item_name = item.get('label').capitalize()
+            labels = ', '.join(sorted(item.get('cor_icon', {}).values()))
 
-        item_string = f"{item_name} ({labels})"
-        station = findall(STATION_REGEX, item.get('station'))[0].title()
-        stations.setdefault(station, [])
-        stations[station].append(item_string)
+            item_string = f"{item_name} ({labels})"
+            station = findall(STATION_REGEX, item.get('station'))[0].title()
+            stations.setdefault(station, [])
+            stations[station].append(item_string)
 
-    string = ""
+        string = ""
 
-    for station in sorted(stations.keys()):
-        string += f"\n    <h2>{station}:</h2>"
+        for station in sorted(stations.keys()):
+            string += f"\n    <h2>{station}:</h2>"
 
-        items = sorted(stations[station])
-        nline = '\n      '
-        string += f'''
-    <ul>
-      {nline.join(f'<li>{item}</li>' for item in items)}
-    </ul>'''
+            items = sorted(stations[station])
+            nline = '\n      '
+            string += f'''
+        <ul>
+        {nline.join(f'<li>{item}</li>' for item in items)}
+        </ul>'''
 
     return template.replace("[MENU_PLACEHOLDER]", string)
 
