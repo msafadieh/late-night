@@ -47,9 +47,12 @@ def parse_results(menu):
 
     for item in menu:
         item_name = item.get('label').capitalize()
-        labels = ', '.join(sorted(item.get('cor_icon', {}).values()))
+        cor_icon = item.get('cor_icon')
 
-        item_string = f"{item_name} ({labels})"
+        # cor_icon is [] and not {} when empty
+        labels = ', '.join(sorted(cor_icon.values())) if cor_icon else ""
+
+        item_string = f"{item_name} ({labels})" if labels else item_name
         station = findall(STATION_REGEX, item.get('station'))[0].title()
         stations.setdefault(station, [])
         stations[station].append(item_string)
@@ -83,9 +86,12 @@ def parse_as_html(menu):
 
         for item in menu:
             item_name = item.get('label').capitalize()
-            labels = ', '.join(sorted(item.get('cor_icon', {}).values()))
+            cor_icon = item.get('cor_icon')
 
-            item_string = f"{item_name} ({labels})"
+            # cor_icon is [] and not {} when empty
+            labels = ', '.join(sorted(cor_icon.values())) if cor_icon else ""
+
+            item_string = f"{item_name} ({labels})" if labels else item_name
             station = findall(STATION_REGEX, item.get('station'))[0].title()
             stations.setdefault(station, [])
             stations[station].append(item_string)
