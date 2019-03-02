@@ -18,7 +18,7 @@ MENU_ITEMS_REGEX = r"Bamco\.menu_items = ({(?:.+:.+,?)+})"
 LATE_NIGHT_REGEX = r"Bamco\.dayparts\[\'7\'\] = ({(?:.+:.+,?)+})"
 STATION_REGEX = r"<strong>@?(.+)<\/strong>"
 FILE_NAME_PATTERN = r"[0-9]{6}.html"
-LABELS_DICT = {}
+LABELS_DICT = {"9": "Gluten-Free"}
 
 FLASK_APP = Flask('Late Night')
 
@@ -56,7 +56,11 @@ def parse_results(menu):
         cor_icon = item.get('cor_icon')
 
         # cor_icon is [] and not {} when empty
-        labels = ', '.join(sorted(cor_icon.values())) if cor_icon else ""
+        if cor_icon:
+            labels_list = sorted(LABELS_DICT.get(key, value) for key, value in cor_icon.items())
+            labels = ', '.join(labels_list)
+        else:
+            labels = ""
 
         item_string = f"{item_name} ({labels})" if labels else item_name
         station = findall(STATION_REGEX, item.get('station'))[0].title()
@@ -95,7 +99,11 @@ def parse_as_html(menu, time):
             cor_icon = item.get('cor_icon')
 
             # cor_icon is [] and not {} when empty
-            labels = ', '.join(sorted(cor_icon.values())) if cor_icon else ""
+            if cor_icon:
+                labels_list = sorted(LABELS_DICT.get(key, value) for key, value in cor_icon.items())
+                labels = ', '.join(labels_list)
+            else:
+                labels = ""
 
             item_string = f"{item_name} ({labels})" if labels else item_name
             station = findall(STATION_REGEX, item.get('station'))[0].title()
