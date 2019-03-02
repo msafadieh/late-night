@@ -44,45 +44,6 @@ def fetch_menu():
 
     return [], None
 
-def parse_results(menu):
-    '''
-        uses the menu items found using the fetch_menu() function
-        to generate a well-formatted string (organized by location).
-    '''
-    stations = dict()
-
-    for item in menu:
-        item_name = item.get('label').capitalize()
-        cor_icon = item.get('cor_icon')
-
-        # cor_icon is [] and not {} when empty
-        if cor_icon:
-            labels_list = sorted(LABELS_DICT.get(key, value) for key, value in cor_icon.items())
-            labels = ', '.join(labels_list)
-        else:
-            labels = ""
-
-        item_string = f"{item_name} ({labels})" if labels else item_name
-        station = findall(STATION_REGEX, item.get('station'))[0].title()
-        stations.setdefault(station, [])
-        stations[station].append(item_string)
-
-    '''
-        lambda function used to generate a string of the form:
-
-        Station Name:
-        Menu Item 1 (Label 1, Label 2)
-        Menu Item 2
-        Menu Item 3 (Label 1)
-        ...
-    '''
-    get_str = lambda station: f"{station}:\n{chr(10).join(sorted(stations[station]))}"
-
-    output = [get_str(station) for station in sorted(stations.keys())]
-
-    return '\n\n'.join(output)
-
-
 def parse_as_html(menu, time):
     '''
         parses elements as an html webpage
