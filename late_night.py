@@ -6,8 +6,9 @@
 from datetime import datetime
 import json
 from multiprocessing import Process
+from os import listdir, remove
 from os.path import isfile
-from re import findall
+from re import findall, fullmatch
 from time import sleep
 from flask import Flask
 from requests import get
@@ -16,6 +17,7 @@ from requests import get
 MENU_ITEMS_REGEX = r"Bamco\.menu_items = ({(?:.+:.+,?)+})"
 LATE_NIGHT_REGEX = r"Bamco\.dayparts\[\'7\'\] = ({(?:.+:.+,?)+})"
 STATION_REGEX = r"<strong>@?(.+)<\/strong>"
+FILE_NAME_PATTERN = r"[0-9]{6}.html"
 LABELS_DICT = {}
 
 FLASK_APP = Flask('Late Night')
@@ -129,7 +131,11 @@ def generate_file_every_15_min():
     '''
     while True:
         name = generate_name()
-        generate_html_file(name)
+        if not isfile(name):
+            generate_html_file(name)
+            clean_old_pages(name)
+        else:
+            generate_html_file(name)
         sleep(900)
 
 def generate_html_file(path):
@@ -144,6 +150,19 @@ def generate_html_file(path):
 
     return html
 
+def clean_old_pages(name):
+    '''
+        removes old HTML pages
+    '''
+    files = listdir()
+    deleted = []
+    for file in files:
+        if fullmatch(FILE_NAME_PATTERN, file) and file != name:
+            deleted.append(file)
+            remove(file)
+    return deleted
+
+
 @FLASK_APP.route('/')
 def main_html():
     '''
@@ -153,7 +172,12 @@ def main_html():
     try:
         name = generate_name()
 
-        html = open(name).read() if isfile(name) else generate_html_file(name)
+        if isfile(name):
+            html = open(name).read()
+        else:
+            html = generate_html_file(name)
+            clean_old_pages(name)
+
         return html
 
     except Exception as exception:
