@@ -5,8 +5,10 @@
 '''
 from datetime import datetime
 import json
+from multiprocessing import Process
 from os.path import isfile
 from re import findall
+from time import sleep
 from flask import Flask
 from requests import get
 
@@ -14,6 +16,7 @@ from requests import get
 MENU_ITEMS_REGEX = r"Bamco\.menu_items = ({(?:.+:.+,?)+})"
 LATE_NIGHT_REGEX = r"Bamco\.dayparts\[\'7\'\] = ({(?:.+:.+,?)+})"
 STATION_REGEX = r"<strong>@?(.+)<\/strong>"
+LABELS_DICT = {}
 
 FLASK_APP = Flask('Late Night')
 
@@ -23,6 +26,7 @@ def fetch_menu():
         file to find menu items.
     '''
     req = get('https://vassar.cafebonappetit.com/').text
+    time = datetime.now().strftime("%a %x %I:%M %p")
 
     menu_data = findall(MENU_ITEMS_REGEX, req)[0]
     menu_items = json.loads(menu_data)
@@ -34,9 +38,9 @@ def fetch_menu():
     for station in stations:
         if station['label'] == 'Gordon Commons':
             items = station['items']
-            return [menu_items.get(item) for item in items]
+            return [menu_items.get(item) for item in items], time
 
-    return []
+    return [], None
 
 def parse_results(menu):
     '''
@@ -73,7 +77,7 @@ def parse_results(menu):
     return '\n\n'.join(output)
 
 
-def parse_as_html(menu):
+def parse_as_html(menu, time):
     '''
         parses elements as an html webpage
     '''
@@ -108,7 +112,37 @@ def parse_as_html(menu):
         {nline.join(f'<li>{item}</li>' for item in items)}
         </ul>'''
 
+        string += f"\n    <p>Last updated: {time}</p>"
+
     return template.replace("[MENU_PLACEHOLDER]", string)
+
+def generate_name():
+    '''
+        generates file name from current date
+    '''
+    return f"{datetime.now().strftime('%d%m%y')}.html"
+
+def generate_file_every_15_min():
+    '''
+        updates the saved menu file every
+        15 minutes
+    '''
+    while True:
+        name = generate_name()
+        generate_html_file(name)
+        sleep(900)
+
+def generate_html_file(path):
+    '''
+        generates HTML file and writes it to file
+    '''
+    menu, time = fetch_menu()
+    html = parse_as_html(menu, time)
+
+    with open(path, 'w') as file:
+        file.write(html)
+
+    return html
 
 @FLASK_APP.route('/')
 def main_html():
@@ -117,19 +151,21 @@ def main_html():
         items if no file was found.
     '''
     try:
-        file_name = f"{datetime.now().strftime('%d%m%y')}.html"
+        name = generate_name()
 
-        if isfile(file_name):
-            return open(file_name, 'r').read()
-
-        menu = fetch_menu()
-        html = parse_as_html(menu)
-
-        with open(file_name, 'w') as file:
-            file.write(html)
-
+        html = open(name).read() if isfile(name) else generate_html_file(name)
         return html
 
     except Exception as exception:
         print(exception)
         return "<h1>Internal Error.</h1>"
+
+def main_loop():
+    '''
+        creates the process that refreshes the html file
+        every 15 minutes
+    '''
+    refresh = Process(target=generate_file_every_15_min)
+    refresh.start()
+
+main_loop()
