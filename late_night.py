@@ -1,4 +1,3 @@
-# pylint: disable = pointless-string-statement, broad-except
 '''
     Fetches a list of food items being served
     at late night.
@@ -138,20 +137,15 @@ def main_html():
         creates an HTML file called "DDMMYY.html" with the list of late night
         items if no file was found.
     '''
-    try:
-        name = generate_name()
+    name = generate_name()
 
-        if isfile(name):
-            html = open(name).read()
-        else:
-            html = generate_html_file(name)
-            clean_old_pages(name)
+    if isfile(name):
+        html = open(name).read()
+    else:
+        html = generate_html_file(name)
+        clean_old_pages(name)
 
-        return html
-
-    except Exception as exception:
-        print(exception)
-        return "<h1>Internal Error.</h1>"
+    return html
 
 def main_loop():
     '''
