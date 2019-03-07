@@ -19,16 +19,6 @@ STATION_REGEX = r"<strong>@?(.+)<\/strong>"
 FILE_NAME_PATTERN = r"[0-9]{6}.html"
 LABELS_DICT = {"9": "Gluten-Free"}
 
-class LateNight(Flask):
-
-    def __init__(self):
-        self.__refresh = Thread(target=generate_file_every_15_min)
-        self.__refresh.start()
-
-        Flask.__init__(self, 'Late Night')
-
-FLASK_APP = LateNight()
-
 def fetch_menu():
     '''
         makes a GET request to CBA's website and parses HTML
@@ -138,6 +128,15 @@ def clean_old_pages(name):
             remove(file)
     return deleted
 
+class LateNight(Flask):
+
+    def __init__(self):
+        self.__refresh = Thread(target=generate_file_every_15_min)
+        self.__refresh.start()
+
+        Flask.__init__(self, 'Late Night')
+
+FLASK_APP = LateNight()
 
 @FLASK_APP.route('/')
 def main_html():
