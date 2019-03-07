@@ -154,9 +154,3 @@ class LateNight(Flask):
 
         Flask.__init__(self, 'Late Night')
         self.add_url_rule('/', view_func=index)
-
-if __name__ == "__main__":
-    NAME = generate_name()
-    _ = generate_html_file(NAME)
-    if isfile(NAME):
-        print("-----> File generation successful!")

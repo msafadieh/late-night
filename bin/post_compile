@@ -1,6 +1,3 @@
 #!/usr/bin/env bash
 
-echo "-----> Starting post compile hook"
-echo "-----> Generating webpage file"
-python3 late_night.py
-echo "-----> Done"
+python3 client/post_compile.py
