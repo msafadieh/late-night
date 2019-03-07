@@ -128,32 +128,32 @@ def clean_old_pages(name):
             remove(file)
     return deleted
 
-class LateNight(Flask):
+def index():
+    '''
+        creates an HTML file called "DDMMYY.html" with the list of late night
+        items if no file was found.
+    '''
+    name = generate_name()
 
+    if isfile(name):
+        html = open(name).read()
+    else:
+        html = generate_html_file(name)
+        clean_old_pages(name)
+
+    return html
+
+class LateNight(Flask):
+    '''
+        extends flask app. also runs a regular page refresher
+        on another thread.
+    '''
     def __init__(self):
-        self.__refresh = Thread(target=generate_file_every_15_min)
+        self.__refresh = Thread(target=generate_file_every_15_min, daemon=True)
         self.__refresh.start()
 
         Flask.__init__(self, 'Late Night')
-
-if __name__ == "late_night":
-    FLASK_APP = LateNight()
-
-    @FLASK_APP.route('/')
-    def main_html():
-        '''
-            creates an HTML file called "DDMMYY.html" with the list of late night
-            items if no file was found.
-        '''
-        name = generate_name()
-
-        if isfile(name):
-            html = open(name).read()
-        else:
-            html = generate_html_file(name)
-            clean_old_pages(name)
-
-        return html
+        self.add_url_rule('/', view_func=index)
 
 if __name__ == "__main__":
     NAME = generate_name()
