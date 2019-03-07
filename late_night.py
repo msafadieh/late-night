@@ -136,23 +136,24 @@ class LateNight(Flask):
 
         Flask.__init__(self, 'Late Night')
 
-FLASK_APP = LateNight()
+if __name__ == "late_night":
+    FLASK_APP = LateNight()
 
-@FLASK_APP.route('/')
-def main_html():
-    '''
-        creates an HTML file called "DDMMYY.html" with the list of late night
-        items if no file was found.
-    '''
-    name = generate_name()
+    @FLASK_APP.route('/')
+    def main_html():
+        '''
+            creates an HTML file called "DDMMYY.html" with the list of late night
+            items if no file was found.
+        '''
+        name = generate_name()
 
-    if isfile(name):
-        html = open(name).read()
-    else:
-        html = generate_html_file(name)
-        clean_old_pages(name)
+        if isfile(name):
+            html = open(name).read()
+        else:
+            html = generate_html_file(name)
+            clean_old_pages(name)
 
-    return html
+        return html
 
 if __name__ == "__main__":
     NAME = generate_name()
