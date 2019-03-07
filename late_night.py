@@ -4,7 +4,7 @@
 '''
 from datetime import datetime
 import json
-from multiprocessing import Process
+from threading import Thread
 from os import listdir, remove
 from os.path import isfile
 from re import findall, fullmatch
@@ -19,7 +19,15 @@ STATION_REGEX = r"<strong>@?(.+)<\/strong>"
 FILE_NAME_PATTERN = r"[0-9]{6}.html"
 LABELS_DICT = {"9": "Gluten-Free"}
 
-FLASK_APP = Flask('Late Night')
+class LateNight(Flask):
+
+    def __init__(self):
+        self.__refresh = Thread(target=generate_file_every_15_min)
+        self.__refresh.start()
+
+        Flask.__init__(self, 'Late Night')
+
+FLASK_APP = LateNight()
 
 def fetch_menu():
     '''
@@ -147,12 +155,8 @@ def main_html():
 
     return html
 
-def main_loop():
-    '''
-        creates the process that refreshes the html file
-        every 15 minutes
-    '''
-    refresh = Process(target=generate_file_every_15_min)
-    refresh.start()
-
-main_loop()
+if __name__ == "__main__":
+    NAME = generate_name()
+    _ = generate_html_file(NAME)
+    if isfile(NAME):
+        print("-----> File generation successful!")
