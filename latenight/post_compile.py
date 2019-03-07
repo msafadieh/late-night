@@ -2,7 +2,7 @@
     refreshes html file post build
 '''
 from os.path import isfile
-from .client import generate_name, generate_html_file
+from latenight.client import generate_name, generate_html_file
 
 if __name__ == "__main__":
     print("-----> Starting post compile hook")
