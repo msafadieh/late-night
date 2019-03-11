@@ -13,7 +13,7 @@ a webpage with Vassar's Gordon Commons late night menu items
 > cd late-night
 > python3 -m venv $(pwd)
 > source bin/activate
-> pip3 install -r requirements
+> pip3 install -r requirements.txt
 ```
 ### Deploy using gunicorn
 ```
