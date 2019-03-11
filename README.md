@@ -17,7 +17,7 @@ a webpage with Vassar's Gordon Commons late night menu items
 ```
 ### Deploy using gunicorn
 ```
-gunicorn main:APP -b localhost:4000
+> gunicorn main:APP -b localhost:4000
 ```
 Make sure to replace `localhost:4000` with the correct host and port. I recommend setting up a reverse proxy using [nginx](https://nginx.org/).
 ### Manually start using client
