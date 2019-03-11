@@ -53,7 +53,7 @@ def parse_as_html(menu, time):
         return "<h1>No food on the menu tonight.</h1>"
 
     else:
-        template = open("template.html", "r").read()
+        template = open("views/template.html", "r").read()
         stations = dict()
 
         for item in menu:
