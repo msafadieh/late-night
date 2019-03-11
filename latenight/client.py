@@ -158,7 +158,3 @@ class LateNight(Flask):
 
         Flask.__init__(self, 'Late Night')
         self.add_url_rule('/', view_func=index)
-        self.add_url_rule('/.well-known/acme-challenge/MCkyH-5D3dRO3odstSj2UQUxRaTfKGtemCe1SsjQ0N4', view_func=challenge)
-
-def challenge():
-    return "MCkyH-5D3dRO3odstSj2UQUxRaTfKGtemCe1SsjQ0N4.QyXe7It5hbuHumhBAlNLybhSZjYLALqLSM3gPLe2QEc"
