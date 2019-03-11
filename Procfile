@@ -1,1 +1,1 @@
-web: gunicorn latenight:MAIN
+web: gunicorn main:APP
