@@ -50,7 +50,7 @@ def parse_as_html(menu, time):
         parses elements as an html webpage
     '''
     if not menu:
-        string = "<h1>No food on the menu tonight.</h1>"
+        return "<h1>No food on the menu tonight.</h1>"
 
     else:
         template = open("template.html", "r").read()
