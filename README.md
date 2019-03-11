@@ -3,7 +3,7 @@ a webpage with Vassar's Gordon Commons late night menu items
 
 ## Requirements
 1. Python 3
-2. [Some python modules](requests.txt)
+2. [Some python modules](requirements.txt)
 
 ## Usage
 
