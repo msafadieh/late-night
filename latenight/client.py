@@ -27,16 +27,20 @@ def fetch_menu():
     req = get('https://vassar.cafebonappetit.com/').text
     time = datetime.now().strftime("%a %x %I:%M %p")
 
-    menu_data = findall(MENU_ITEMS_REGEX, req)[0]
-    menu_items = json.loads(menu_data)
+    menu_data = findall(MENU_ITEMS_REGEX, req)
+    
+    if menu_data:
+        menu_items = json.loads(menu_data[0])
+        
+        late_night_data = findall(LATE_NIGHT_REGEX, req)
+    
+        if late_night_data:
+            late_night_menu = json.loads(late_night_data[0])
 
-    late_night_data = findall(LATE_NIGHT_REGEX, req)[0]
-    late_night_menu = json.loads(late_night_data)
-
-    stations = late_night_menu['stations']
-    for station in stations:
-        if station['label'] == 'Gordon Commons':
-            items = station['items']
+            stations = late_night_menu['stations']
+            for station in stations:
+                if station['label'] == 'Gordon Commons':
+                    items = station['items']
             return [menu_items.get(item) for item in items], time
 
     return [], None
