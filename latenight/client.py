@@ -28,12 +28,12 @@ def fetch_menu():
     time = datetime.now().strftime("%a %x %I:%M %p")
 
     menu_data = findall(MENU_ITEMS_REGEX, req)
-    
+
     if menu_data:
         menu_items = json.loads(menu_data[0])
-        
+
         late_night_data = findall(LATE_NIGHT_REGEX, req)
-    
+
         if late_night_data:
             late_night_menu = json.loads(late_night_data[0])
 
@@ -52,39 +52,38 @@ def parse_as_html(menu, time):
     if not menu:
         return "<h1>No food on the menu tonight.</h1>"
 
-    else:
-        template = open("views/template.html", "r").read()
-        stations = dict()
+    template = open("views/template.html", "r").read()
+    stations = dict()
 
-        for item in menu:
-            item_name = item.get('label').capitalize()
-            cor_icon = item.get('cor_icon')
+    for item in menu:
+        item_name = item.get('label').capitalize()
+        cor_icon = item.get('cor_icon')
 
-            # cor_icon is [] and not {} when empty
-            if cor_icon:
-                labels_list = sorted(LABELS_DICT.get(key, value) for key, value in cor_icon.items())
-                labels = ', '.join(labels_list)
-            else:
-                labels = ""
+        # cor_icon is [] and not {} when empty
+        if cor_icon:
+            labels_list = sorted(LABELS_DICT.get(key, value) for key, value in cor_icon.items())
+            labels = ', '.join(labels_list)
+        else:
+            labels = ""
 
-            item_string = f"{item_name} ({labels})" if labels else item_name
-            station = findall(STATION_REGEX, item.get('station'))[0].title()
-            stations.setdefault(station, [])
-            stations[station].append(item_string)
+        item_string = f"{item_name} ({labels})" if labels else item_name
+        station = findall(STATION_REGEX, item.get('station'))[0].title()
+        stations.setdefault(station, [])
+        stations[station].append(item_string)
 
-        string = ""
+    string = ""
 
-        for station in sorted(stations.keys()):
-            string += f"\n    <h2>{station}:</h2>"
+    for station in sorted(stations.keys()):
+        string += f"\n    <h2>{station}:</h2>"
 
-            items = sorted(stations[station])
-            nline = '\n      '
-            string += f'''
-        <ul>
-        {nline.join(f'<li>{item}</li>' for item in items)}
-        </ul>'''
+        items = sorted(stations[station])
+        nline = '\n      '
+        string += f'''
+    <ul>
+    {nline.join(f'<li>{item}</li>' for item in items)}
+    </ul>'''
 
-        string += f"\n    <p>Last updated: {time}</p>"
+    string += f"\n    <p>Last updated: {time}</p>"
 
     return template.replace("[MENU_PLACEHOLDER]", string)
 
