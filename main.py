@@ -3,4 +3,4 @@
 '''
 from latenight import LateNight
 
-APP = LateNight()
+APP = LateNight("Late Night")
