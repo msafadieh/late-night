@@ -10,14 +10,19 @@ class LateNight(Flask):
         extends flask app. also runs a regular page refresher
         on another thread.
     '''
-    def __init__(self):
-        Flask.__init__(self, 'Late Night')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_url_rule('/', 'index', self.__index)
 
-        self.add_url_rule(
-            '/',
-            view_func=lambda: render_template(
-                'template.html',
-                date_time=datetime.now().strftime("%a %x %I:%M %p"),
-                sorted=sorted,
-                stations=fetch_menu())
-            )
+    @staticmethod
+    def __index():
+        """
+            The index page with the late night menu items.
+
+            :return HTML page with late menu items.
+        """
+        return render_template(
+            'template.html',
+            date_time=datetime.now().strftime("%a %x %I:%M %p"),
+            sorted=sorted,
+            stations=fetch_menu())
