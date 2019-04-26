@@ -24,7 +24,7 @@ Make sure to replace `localhost:4000` with the correct host and port. I recommen
 ```
 from latenight import LateNight
 
-app = LateNight()
+app = LateNight("Late Night")
 app.run(port=4000,
         host="localhost")
 ```
