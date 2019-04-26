@@ -16,7 +16,15 @@
   <body>
 
     <h1>Late Night Menu</h1>
-      [MENU_PLACEHOLDER]
+    {% for station in sorted(stations.keys()) %}
+      <h2>{{ station }}:</h2>
+      <ul>
+        {% for item in sorted(stations[station]) %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+    <p>Last updated: {{ date_time }}</p>
 
   </body>
 
