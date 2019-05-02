@@ -1,7 +1,6 @@
 '''
     app for gunicorn to use
 '''
-from datetime import datetime
 from flask import Flask, render_template
 from .utils import fetch_menu
 
@@ -23,6 +22,5 @@ class LateNight(Flask):
         """
         return render_template(
             'template.html',
-            date_time=datetime.now().strftime("%a %x %I:%M %p"),
             sorted=sorted,
             stations=fetch_menu())
