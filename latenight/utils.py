@@ -41,7 +41,7 @@ def fetch_menu():
                         labels_list = sorted(LABELS_DICT.get(key, coricon[key]) for key in coricon)
                         labels = ', '.join(labels_list)
 
-                        item_string = f"{item_name} ({labels})" if labels else item_name
+                        item_string = "{} ({})".format(item_name, labels) if labels else item_name
                         station_name = re.findall(STATION_REGEX, item.get('station'))[0].title()
                         result.setdefault(station_name, [])
                         result[station_name].append(item_string)
