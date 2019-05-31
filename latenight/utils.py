@@ -46,4 +46,4 @@ def fetch_menu():
                         result.setdefault(station_name, [])
                         result[station_name].append(item_string)
                     return result
-    return []
+    return {"No Menu": ["Please come back later!"]}
