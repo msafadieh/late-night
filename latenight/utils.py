@@ -10,7 +10,6 @@ import requests
 MENU_ITEMS_REGEX = r"Bamco\.menu_items = ({(?:.+:.+,?)+})"
 LATE_NIGHT_REGEX = r"Bamco\.dayparts\[\'7\'\] = ({(?:.+:.+,?)+})"
 STATION_REGEX = r"<strong>@?(.+)<\/strong>"
-FILE_NAME_PATTERN = r"[0-9]{6}.html"
 LABELS_DICT = {"9": "Gluten-Free"}
 
 def fetch_menu():
