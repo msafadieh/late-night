@@ -11,23 +11,15 @@ a webpage with Vassar's Gordon Commons late night menu items
 ```
 > git clone https://github.com/msafadieh/late-night.git
 > cd late-night
-> python3 -m venv $(pwd)
+> python3 -m venv .env
 > source bin/activate
 > pip3 install -r requirements.txt
 ```
 ### Deploy using gunicorn
 ```
-> gunicorn main:APP -b localhost:4000
+> gunicorn latenight:app -b localhost:4000
 ```
 Make sure to replace `localhost:4000` with the correct host and port. I recommend setting up a reverse proxy using [nginx](https://nginx.org/).
-### Manually start using client
-```
-from latenight import LateNight
-
-app = LateNight("Late Night")
-app.run(port=4000,
-        host="localhost")
-```
 
 ## License
 This project was released under [GPL 3.0](LICENSE).
