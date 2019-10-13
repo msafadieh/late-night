@@ -7,42 +7,42 @@ import re
 import requests
 
 # regular expressions used to fetch dictionaries and station names
-MENU_ITEMS_REGEX = r"Bamco\.menu_items = ({(?:.+:.+,?)+})"
-LATE_NIGHT_REGEX = r"Bamco\.dayparts\[\'7\'\] = ({(?:.+:.+,?)+})"
+MENU_ITEMS_REGEX = r"Bamco\.(?:menu_items|dayparts\[\'7\'\]) = ({(?:.+:.+,?)+})"
 STATION_REGEX = r"<strong>@?(.+)<\/strong>"
-LABELS_DICT = {"9": "Gluten-Free"}
+ALT_LABELS = {"Made without Gluten-Containing Ingredients": "Gluten-Free"}
+
+def fetch_from_website():
+    req = requests.get("https://vassar.cafebonappetit.com/")
+
+    if req.status_code == 200:
+        return req.text
+    
+    raise Exception("error fetching from deece website")
+
+def parse_menu_items(html):
+    menus = re.findall(MENU_ITEMS_REGEX, html)
+    if len(menus) == 2:
+        menu_items = json.loads(menus[0])
+        late_night_menu = json.loads(menus[1])
+        
+        for area in filter(lambda s: s["label"].startswith("Gordon"), late_night_menu['stations']):
+            results = {}
+
+            for item in map(lambda i: menu_items.get(i), area['items']):
+                name = item['label']
+                cor_icon = item['cor_icon'] or dict()
+                labels = ', '.join(map(lambda l: ALT_LABELS.get(l, l), cor_icon.values()))
+                station_name = item.get('station', '')[9:-9]
+                results.setdefault(station_name, [])
+                results[station_name].append({'name': name, 'restrictions': labels})
+            return results
+
+    raise Exception("error parsing menu items")
 
 def fetch_menu():
     '''
         makes a GET request to CBA's website and parses HTML
         file to find menu items.
     '''
-    req = requests.get('https://vassar.cafebonappetit.com/').text
-    menu_data = re.findall(MENU_ITEMS_REGEX, req)
-
-    if menu_data:
-        menu_items = json.loads(menu_data[0])
-
-        late_night_data = re.findall(LATE_NIGHT_REGEX, req)
-
-        if late_night_data:
-            late_night_menu = json.loads(late_night_data[0])
-
-            stations = late_night_menu['stations']
-            for station in stations:
-                if station['label'] == 'Gordon Commons':
-                    result = {}
-                    for item in (menu_items.get(item) for item in station['items']):
-                        item_name = item.get('label').capitalize()
-                        coricon = item.get('cor_icon', [])
-
-                        # cor_icon is [] and not {} when empty
-                        labels_list = sorted(LABELS_DICT.get(key, coricon[key]) for key in coricon)
-                        labels = ', '.join(labels_list)
-
-                        item_string = "{} ({})".format(item_name, labels) if labels else item_name
-                        station_name = re.findall(STATION_REGEX, item.get('station'))[0].title()
-                        result.setdefault(station_name, [])
-                        result[station_name].append(item_string)
-                    return result
-    return {"No Menu": ["Please come back later!"]}
+    html = fetch_from_website()
+    return parse_menu_items(html)
