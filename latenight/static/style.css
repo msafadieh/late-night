@@ -33,7 +33,7 @@ body {
 
 .header {
   color: #882344;
-  font-family: "Lobster", cursive;
+  font-family: "Lobster", Helvetica, Arial, sans-serif;
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
   border-bottom: 1px solid #ccc;

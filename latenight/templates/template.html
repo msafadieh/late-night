@@ -15,7 +15,7 @@
         </div>
         <div class="menu">
             {% for station in sorted(stations.keys()) %}
-            <h2>{{ station }}:</h2>
+            <h2>{{ station }}</h2>
             <ul>
                 {% for item in stations[station] %}
                 <li>{{ item["name"] }}<span class="restrictions">{{ item["restrictions"] }}</span></li>
