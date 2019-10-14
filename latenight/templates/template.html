@@ -18,7 +18,12 @@
             <h2>{{ station }}</h2>
             <ul>
                 {% for item in stations[station] %}
-                <li>{{ item["name"] }}<span class="restrictions">{{ item["restrictions"] }}</span></li>
+                <li>
+                    {{ item["name"] }}
+                    <div class="restrictions">
+                        {{ item["restrictions"] }}
+                    </div>
+                </li>
                 {% endfor %}
             </ul>
             {% endfor %}

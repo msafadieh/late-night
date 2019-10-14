@@ -70,7 +70,6 @@ body {
 }
 
 .restrictions {
-  display: block;
   color: gray;
   text-transform: uppercase;
   font-style: italic;
