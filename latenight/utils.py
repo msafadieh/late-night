@@ -25,8 +25,10 @@ def parse_menu_items(html):
         menu_items = json.loads(menus[0])
         late_night_menu = json.loads(menus[1])
         
-        for area in filter(lambda s: s["label"].startswith("Gordon"), late_night_menu['stations']):
-            results = {}
+        print([m["label"] for m in late_night_menu['stations']])
+        
+        results = {}
+        for area in late_night_menu['stations']:
 
             for item in map(lambda i: menu_items.get(i), area['items']):
                 name = item['label']
@@ -35,7 +37,7 @@ def parse_menu_items(html):
                 station_name = item.get('station', '')[9:-9]
                 results.setdefault(station_name, [])
                 results[station_name].append({'name': name, 'restrictions': labels})
-            return results
+        return results
 
     raise Exception("error parsing menu items")
 
